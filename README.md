@@ -1,0 +1,1 @@
+This repository contains a simple application that uses the MERN stack (MongoDB, Express, React, Node.js).

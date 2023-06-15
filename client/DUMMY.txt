@@ -1,0 +1,1 @@
+Here will be the other part of the MERN stack, the front-end. We will be using React with TailWindCSS to build the front-end of the application.
