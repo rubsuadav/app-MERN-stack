@@ -1,1 +1,0 @@
-This file is for keeping the folder structure in the repository.
