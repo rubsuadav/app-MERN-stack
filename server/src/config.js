@@ -4,3 +4,4 @@ config();
 
 export const PORT = process.env.PORT || 8000;
 export const MONGO_URL = process.env.MONGO_URL;
+export const secret = process.env.SECRET;
