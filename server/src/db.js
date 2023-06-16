@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 import chalk from "chalk";
 //local imports
 import { MONGO_URL } from "./config.js";
-import PostMessage from "./models/post.js";
+import user from "./models/user.js";
+import post from "./models/post.js";
 
 const connection = mongoose.connection;
-const collectionName = await PostMessage.collection.collectionName;
 
 export const connectDB = async () => {
   try {
@@ -15,10 +15,9 @@ export const connectDB = async () => {
         255,
         200,
         255
-      )(`MongoDB connected to ${connection.db.databaseName}`)
+      )(`MongoDB connected to the database ${connection.db.databaseName}`)
     );
-    await clearCollection();
-    await createCollection();
+    await recreateDatabase();
   } catch (error) {
     console.error(
       chalk.red(`Can't connect to the databaseName: ${error.message}`)
@@ -26,19 +25,24 @@ export const connectDB = async () => {
   }
 };
 
-async function clearCollection() {
+async function recreateDatabase() {
   try {
-    await PostMessage.deleteMany({});
-    console.log(chalk.yellow(`Collection ${collectionName} cleared`));
+    await connection.dropDatabase();
+    console.log(
+      chalk.rgb(0, 0, 255)(`Database ${connection.db.databaseName} dropped`)
+    );
+    await createModels();
+    console.log(chalk.blue(`Models created`));
   } catch (error) {
-    console.error(chalk.red(`Error clearing collection: ${error.message}`));
+    console.error(chalk.red(`Can't recreate the database: ${error.message}`));
   }
 }
 
-async function createCollection() {
+async function createModels() {
   try {
-    console.log(chalk.blue(`Collection ${collectionName} created`));
+    await user.createCollection();
+    await post.createCollection();
   } catch (error) {
-    console.error(chalk.red(error.message));
+    console.error(chalk.red(`Can't create the models: ${error.message}`));
   }
 }
