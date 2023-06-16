@@ -7,14 +7,15 @@ import {
   deletePost,
   likePost,
 } from "../controllers/post.controller.js";
+import { auth } from "../middlewares/auth.js";
 
 const router = Router();
 
 router.get("/", getPosts);
-router.post("/", createPost);
-router.get("/:id", getPost);
-router.patch("/:id", updatePost);
-router.delete("/:id", deletePost);
-router.patch("/:id/likePost", likePost);
+router.post("/", auth, createPost);
+router.get("/:id", auth, getPost);
+router.patch("/:id", auth, updatePost);
+router.delete("/:id", auth, deletePost);
+router.patch("/:id/likePost", auth, likePost);
 
 export default router;
