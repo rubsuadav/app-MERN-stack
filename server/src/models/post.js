@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const postSchema = mongoose.Schema({
-  title: String,
+  title: { type: String, required: true },
   message: String,
   creator: String,
   tags: [String],
@@ -10,6 +10,6 @@ const postSchema = mongoose.Schema({
   createdAt: { type: Date, default: new Date() },
 });
 
-const PostMessage = mongoose.model("PostMessage", postSchema);
+const postMessage = mongoose.model("PostMessage", postSchema);
 
-export default PostMessage;
+export default postMessage;

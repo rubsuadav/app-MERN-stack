@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 import chalk from "chalk";
-
 //local imports
 import { MONGO_URL } from "./config.js";
 import PostMessage from "./models/post.js";
 
 const connection = mongoose.connection;
+const collectionName = await PostMessage.collection.collectionName;
 
 export const connectDB = async () => {
   try {
@@ -17,7 +17,7 @@ export const connectDB = async () => {
         255
       )(`MongoDB connected to ${connection.db.databaseName}`)
     );
-    await dropCollection();
+    await clearCollection();
     await createCollection();
   } catch (error) {
     console.error(
@@ -26,22 +26,17 @@ export const connectDB = async () => {
   }
 };
 
-async function dropCollection() {
+async function clearCollection() {
   try {
-    const collections = await connection.db.listCollections().toArray();
-    const nameCollections = collections.map((collection) => collection.name);
-    for (const collection of nameCollections) {
-      await connection.dropCollection(collection);
-      console.log(chalk.blue(`Collection ${collection} dropped`));
-    }
-
+    await PostMessage.deleteMany({});
+    console.log(chalk.yellow(`Collection ${collectionName} cleared`));
   } catch (error) {
-    console.error(chalk.red(error.message));
+    console.error(chalk.red(`Error clearing collection: ${error.message}`));
   }
 }
+
 async function createCollection() {
   try {
-    const collectionName = await PostMessage.collection.collectionName;
     console.log(chalk.blue(`Collection ${collectionName} created`));
   } catch (error) {
     console.error(chalk.red(error.message));
