@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
-import { MONGO_URL } from "./config.js";
 import chalk from "chalk";
+
+//local imports
+import { MONGO_URL } from "./config.js";
+import PostMessage from "./models/post.js";
 
 const connection = mongoose.connection;
 
@@ -17,22 +20,29 @@ export const connectDB = async () => {
     await dropCollection();
     await createCollection();
   } catch (error) {
-    console.error(chalk.red(`Can't connect to the databaseName: ${error.message}`));
+    console.error(
+      chalk.red(`Can't connect to the databaseName: ${error.message}`)
+    );
   }
 };
 
 async function dropCollection() {
   try {
-    await connection.dropCollection("users");
-    console.log(chalk.red(`Collection users dropped`));
+    const collections = await connection.db.listCollections().toArray();
+    const nameCollections = collections.map((collection) => collection.name);
+    for (const collection of nameCollections) {
+      await connection.dropCollection(collection);
+      console.log(chalk.blue(`Collection ${collection} dropped`));
+    }
+
   } catch (error) {
     console.error(chalk.red(error.message));
   }
 }
 async function createCollection() {
   try {
-    await connection.createCollection("users");
-    console.log(chalk.blue(`Collection users created`));
+    const collectionName = await PostMessage.collection.collectionName;
+    console.log(chalk.blue(`Collection ${collectionName} created`));
   } catch (error) {
     console.error(chalk.red(error.message));
   }
