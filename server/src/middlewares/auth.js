@@ -17,7 +17,6 @@ export const auth = async (req, res, next) => {
     }
     next();
   } catch (error) {
-    console.error("You must be logged in");
     res.status(401).json({ msg: "You must be logged in" });
   }
 };
