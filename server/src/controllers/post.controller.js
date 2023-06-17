@@ -100,7 +100,7 @@ export const getPostsByCreator = async (req, res) => {
     const posts = await postMessage.find({ creator: userId });
     res.status(200).json({ data: posts });
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -135,8 +135,16 @@ export const createPost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
   const { id } = req.params;
+  const userId = req.userId;
   const { title, message, creator, tags, selectedFile } = req.body;
   try {
+    const post = await postMessage.findById(id);
+    if (!post) return res.status(404).json({ msg: "Post not found" });
+    const postCreator = post.creator;
+    if (postCreator !== userId)
+      return res.status(401).json({
+        msg: "Unauthorized, this post was not created by yourself, you can't update it!",
+      });
     const updatedPost = await postMessage.findByIdAndUpdate(
       id,
       { title, message, creator, tags, selectedFile, _id: id },
@@ -144,17 +152,25 @@ export const updatePost = async (req, res) => {
     );
     res.status(200).json(updatedPost);
   } catch (error) {
-    res.status(404).json({ msg: error.message });
+    res.status(500).json({ msg: error.message });
   }
 };
 
 export const deletePost = async (req, res) => {
   const { id } = req.params;
+  const userId = req.userId;
   try {
+    const post = await postMessage.findById(id);
+    if (!post) return res.status(404).json({ msg: "Post not found" });
+    const postCreator = post.creator;
+    if (postCreator !== userId)
+      return res.status(401).json({
+        msg: "Unauthorized, this post was not created by yourself, you can't delete it!",
+      });
     await postMessage.findByIdAndRemove(id);
-    res.status(200).json({ msg: "Post deleted successfully" });
+    res.status(204).json({ msg: "Post deleted successfully" });
   } catch (error) {
-    res.status(404).json({ msg: error.message });
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -182,6 +198,7 @@ export const commentPost = async (req, res) => {
   const { value } = req.body;
   try {
     const post = await postMessage.findById(id);
+    if (!post) return res.status(404).json({ msg: "Post not found" });
     post.comments.push(value);
     const updatedPost = await postMessage.findByIdAndUpdate(id, post, {
       new: true,
