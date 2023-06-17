@@ -46,7 +46,6 @@ export const getPosts = async (req, res) => {
 
 /**
  * Searches for posts based on a search query or tags.
- *
  * @param {String} searchQuery - The search query to match against post titles.
  * @param {String} tags - The tags to match against post tags.
  * @returns {Array} An array of posts that match the search query or tags.
@@ -79,6 +78,29 @@ export const getPostsBySearch = async (req, res) => {
     res.status(200).json({ data: posts });
   } catch (error) {
     res.status(500).json({ msg: error.message });
+  }
+};
+
+/**
+ * Returns all posts created by a specific user.
+ * @param {String} creator - The username of the user to return posts for.
+ * @returns {Array} An array of posts created by the specified user.
+ 
+ * @example
+ * // Request Example:
+ * // GET /api/posts/creator?creator=JohnDoe
+ * // This request will return all posts created by the user with the username "JohnDoe".
+ */
+export const getPostsByCreator = async (req, res) => {
+  const { creator } = req.query;
+  try {
+    const userByUsername = await user.findOne({ username: creator });
+    if (!userByUsername) return res.status(404).json({ msg: "User not found" });
+    const userId = userByUsername._id;
+    const posts = await postMessage.find({ creator: userId });
+    res.status(200).json({ data: posts });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
   }
 };
 
@@ -146,6 +168,21 @@ export const likePost = async (req, res) => {
     } else {
       post.likes = post.likes.filter((id) => id !== String(req.userId));
     }
+    const updatedPost = await postMessage.findByIdAndUpdate(id, post, {
+      new: true,
+    });
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+};
+
+export const commentPost = async (req, res) => {
+  const { id } = req.params;
+  const { value } = req.body;
+  try {
+    const post = await postMessage.findById(id);
+    post.comments.push(value);
     const updatedPost = await postMessage.findByIdAndUpdate(id, post, {
       new: true,
     });
