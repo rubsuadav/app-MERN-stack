@@ -4,6 +4,10 @@ import user from "../models/user.js";
 import { secret } from "../config.js";
 import { validateData, validateUniqueUser } from "../validators/validate.js";
 
+/**
+ * @param {String} username
+ * @returns {Object} The correspodingser profile
+ */
 export const getUserProfile = async (req, res) => {
   const { username } = req.params;
   try {
@@ -62,9 +66,9 @@ export const updateUserProfile = async (req, res) => {
 };
 
 export const signIn = async (req, res) => {
-  const { email, password } = req.body;
+  const { password, username } = req.body;
   try {
-    const oldUser = await user.findOne({ email });
+    const oldUser = await user.findOne({ username });
 
     if (!oldUser)
       return res.status(404).json({ message: "User doesn't exist" });
@@ -74,11 +78,20 @@ export const signIn = async (req, res) => {
     if (!isPasswordCorrect)
       return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign(
+    const access = jwt.sign(
       { email: oldUser.email, username: oldUser.username, id: oldUser._id },
       secret
     );
-    res.status(200).json({ result: oldUser, token });
+
+    const refresh = jwt.sign(
+      { email: oldUser.email, username: oldUser.username, id: oldUser._id },
+      secret + oldUser.password
+    );
+
+    res.cookie("access_token", access, { httpOnly: true });
+    res.cookie("refresh_token", refresh, { httpOnly: true });
+
+    res.status(200).json({ result: oldUser, access, refresh });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
