@@ -35,7 +35,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    const response = await fetch("http://localhost:8000/api/signin", {
+    const response = await fetch("http://localhost:8000/api/auth/signin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

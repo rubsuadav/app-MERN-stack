@@ -4,6 +4,7 @@ import cors from "cors";
 
 //local import
 import indexRoutes from "./routes/index.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 import postRpoutes from "./routes/post.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import "./config.js";
@@ -16,8 +17,9 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/", indexRoutes);
+app.use("/api/auth", authRoutes)
 app.use('/api/posts', postRpoutes);
-app.use("/api", userRoutes);
+app.use("/api/users", userRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({ msg: "Not found" });
