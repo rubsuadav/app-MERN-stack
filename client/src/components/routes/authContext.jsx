@@ -4,6 +4,7 @@ import {
   useMemo,
   useState,
   useContext,
+  useEffect,
 } from "react";
 import PropTypes from "prop-types";
 
@@ -25,6 +26,18 @@ export function AuthContextProvider({ children }) {
     localStorage.removeItem("refresh_token");
     setIsAuthenticated(false);
   }, []);
+
+  useEffect(() => { // This is to handle the case where the user closes the browser without logging out
+    const handleBeforeUnload = () => {
+      logout();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [logout]);
 
   const value = useMemo(
     () => ({
