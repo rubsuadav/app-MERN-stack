@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   useCallback,
   useMemo,
@@ -27,7 +27,8 @@ export function AuthContextProvider({ children }) {
     setIsAuthenticated(false);
   }, []);
 
-  useEffect(() => { // This is to handle the case where the user closes the browser without logging out
+  useEffect(() => {
+    // This is to handle the case where the user closes the browser without logging out
     const handleBeforeUnload = () => {
       logout();
     };

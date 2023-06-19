@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthContextProvider } from "./components/routes/authContext";
+import React from "react";
 
 //Redux imports
 import { Provider } from "react-redux";
