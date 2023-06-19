@@ -6,7 +6,7 @@ import { validateData, validateUniqueUser } from "../validators/validate.js";
 
 /**
  * @param {String} username
- * @returns {Object} The correspodingser profile
+ * @returns {Object} The correspoding user profile
  */
 export const getUserProfile = async (req, res) => {
   const { username } = req.params;
@@ -20,6 +20,32 @@ export const getUserProfile = async (req, res) => {
       name: userByUsername[0].name,
       username: userByUsername[0].username,
       email: userByUsername[0].email,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
+ * @param {String} username
+ * @returns {Object} Your personal profile
+ */
+export const getPersonalProfile = async (req, res) => {
+  const userId = req.userId;
+  const { username } = req.params;
+  try {
+    const userByUsername = await user.find({ username });
+    const users = userByUsername.map((user) => user._id);
+    if (userId !== users[0].toString()) {
+      return res
+        .status(401)
+        .json({ message: "You can't see one user profile if not yourself!" });
+    }
+    res.status(200).json({
+      name: userByUsername[0].name,
+      username: userByUsername[0].username,
+      email: userByUsername[0].email,
+      profilePicture: userByUsername[0].profilePicture,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
