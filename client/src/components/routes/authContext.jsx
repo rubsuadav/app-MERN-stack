@@ -27,7 +27,7 @@ export function AuthContextProvider({ children }) {
     setIsAuthenticated(false);
   }, []);
 
-  useEffect(() => {
+  /*useEffect(() => {
     // This is to handle the case where the user closes the browser without logging out
     const handleBeforeUnload = () => {
       logout();
@@ -38,7 +38,7 @@ export function AuthContextProvider({ children }) {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [logout]);
+  }, [logout]);*/
 
   const value = useMemo(
     () => ({
