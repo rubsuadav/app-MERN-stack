@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
@@ -19,7 +19,8 @@ function classNames(...classes) {
 
 export default function Header() {
   const { isAuthenticated, logout } = useAuthContext();
-
+  const token = localStorage.getItem("access_token");
+  const [username, setUsername] = useState("");
   function handleLogout(e) {
     e.preventDefault();
     swal({
@@ -38,6 +39,20 @@ export default function Header() {
       }
     });
   }
+
+  async function getUsername() {
+    const response = await fetch("http://localhost:8000/api/users", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    setUsername(data.username);
+  }
+  useEffect(() => {
+    getUsername();
+  }, [token]);
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -100,7 +115,7 @@ export default function Header() {
                         <span className="sr-only">Open user menu</span>
                         <img
                           className="h-8 w-8 rounded-full"
-                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                          src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxAODw4NBw0NDQ8ODxAOEA8PDw8NDQ0PFREXFhUdExMYHCggGBolGxMTITEhJSkrLi4uFx8zODMtNygtLisBCgoKDQ0NDw8PDysZFRkrKys3Ky0rNy0tKys3NysrKysrLSsrKy0rKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIAOEA4QMBIgACEQEDEQH/xAAaAAEBAQEBAQEAAAAAAAAAAAAABAUBAwIH/8QAMhABAAIAAgcGBQMFAAAAAAAAAAECBBEDBSExMkFREkJxgaHBIlJygtFhkbEUM2KS8f/EABYBAQEBAAAAAAAAAAAAAAAAAAABAv/EABYRAQEBAAAAAAAAAAAAAAAAAAABEf/aAAwDAQACEQMRAD8A/VAGmAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAetMPe26s+ex7RgLc5rH7oYkFc4C3Ka+ryvhb131z8NoY8R1xQAAAAAAAAAAAAAAAAAAAAB7YbQ9uct0RvlBzQaCbz8O7nPRpaDDVpujOes73pSkRERWMoh9I1IACgAPLTaCt+KNvWN7OxGGmn6x1/LWcmM9kiWMMUYvD9ic68M+idWQBQAAAAAAAAAAAAAAAB2I6NfD6LsViOe+fFn4Gmd/p2/hqosAEaAAAAAAfGlpFomtubHvWazMW3xOTbZ2sdHlaLddnnAlRgNMgAAAAAAAAAAAAAAAL9WxxT4QuQ6tnZbxhcy1AAUAAAAAASaxj4YnpZWl1hPwecCVmANMgAAAAAAAAAAAAAAALNXWytMdY/j/rRYuiv2bRaOUtms5xnHNK1HQEUAAAAAAQ6ytw18ZWsjE6Tt2mY3bo8BK8gGmQAAAAAAAAAAAAAAABdgMR3Lfb+ELqGtwRYXGd3S7+U9fFajYAAAACXE4uK7KbZ9IB847EZR2a753/pDOdmc9s7ZcVi0AUAAAAAAAAAAAAAAAAAAHtocTam6c46S8RBpaPHVnjiY9YesYqnzQyXDF1rziafNDyvjqxwxNvSGaGGqNLi7W/xjpH5TgYgAoAAAAAAAAAAAAAAAAA9NForXn4I8+UIPN2tZnZWJnwjNoaLAxH9ye1P7QqrWI2VjLw2GrIzaYK874ivi9q6v+a0+ULhFyJYwNOfanzfUYOny+sqAMT/0lPl9ZfM4KnLtR5qgMRW1fHdtPnGbwvgrxw5W8GoBkYl6TXjiY8Xy3LVidk7UulwVZ4Phn0/ZdSxmj102gtTijZ1jc8hABQAAAAAAAAAAdcaGDwuXxaTfyjohj4w2Dz26XZHTnPivrXKMq7Ih0RuAAAAAAAAAAAAOTHVFicFz0P8Ar+FwDDmOrjTxeG7W2my38s2Y5SrFjgCgAAAAAAD6rXOYiN8zkCnA6DtT2rbo3frLSfGipFYiK8n2y2AAAAAAAAAAAAAAAAIcfoO/X7vyuctGcZTukGI4+9NTs2ms8p9OT4aYAAAAAAFOApnfPpGaZbq2NtvL3QjQARsAAAAAAAAAAAAAAAAABn6ypti3WMkTR1lHwx9XtLOWM0AVAAAABdqzv/b7oV2rO/8Ab7osXgI0AAAAAAAAAAAAAAAAAAk1lwx9XtLNaWsuGPq9pZqxmgCoAAAALtWd/wC33QrtWd/7fdFi8BGgAAAAAAAAAAAAAAAAAEmsuGPq9pZrS1lwx9XtLNWM0AVAAAABdqzvfb7gixeAjQAAAAAAAAAAAAAAAAACTWXDH1e0s0FjNAFQAB//2Q=="
                           alt=""
                         />
                         {/* PONER IMAGEN DEL USUARIO LOGEADO EN EL CASO DE QUE LA TENGA */}
@@ -118,15 +133,15 @@ export default function Header() {
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <Menu.Item>
                           {({ active }) => (
-                            <a
-                              href="#"
+                            <Link
+                              to={`/profile/${username}`}
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
                               )}
                             >
                               Ver perfil
-                            </a>
+                            </Link>
                           )}
                         </Menu.Item>
                         <Menu.Item>

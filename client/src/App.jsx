@@ -16,6 +16,7 @@ import PrivateRoute from "./components/routes/PrivateRoute";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 import Admin from "./components/admin/Admin";
 import Register from "./components/authentication/Register";
+import PersonalProfile from "./components/pages/PersonalProfile";
 
 function App() {
   const store = configureStore({
@@ -36,8 +37,11 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
               </Route>
-              <Route path="/admin" element={<PrivateRoute />}>
-                <Route index element={<Admin />} />
+              <Route element={<PrivateRoute />}>
+                <Route
+                  path="/profile/:username"
+                  element={<PersonalProfile />}
+                />
               </Route>
             </Routes>
           </Router>

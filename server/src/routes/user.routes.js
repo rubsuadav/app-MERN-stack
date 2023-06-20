@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getUserNameByLoggedInUser,
   getUserProfile,
   getPersonalProfile,
   updateUserProfile,
@@ -13,6 +14,7 @@ import {
 
 const router = Router();
 
+router.get("/", auth, getUserNameByLoggedInUser);
 router.get("/:username", getUserProfile);
 router.get("/profile/:username", auth, getPersonalProfile);
 

@@ -5,6 +5,22 @@ import { secret } from "../config.js";
 import { validateData, validateUniqueUser } from "../validators/validate.js";
 
 /**
+ * @returns {Object} The username of the logged in user
+ */
+export const getUserNameByLoggedInUser = async (req, res) => {
+  const userId = req.userId;
+  try {
+    const userById = await user.findById(userId);
+    if (!userById)
+      return res.status(404).json({ message: "User doesn't exist" });
+
+    res.status(200).json({ username: userById.username });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
  * @param {String} username
  * @returns {Object} The correspoding user profile
  */
