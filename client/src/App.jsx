@@ -15,6 +15,7 @@ import PublicRoute from "./components/routes/PublicRoute";
 import PrivateRoute from "./components/routes/PrivateRoute";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 import Admin from "./components/admin/Admin";
+import Register from "./components/authentication/Register";
 
 function App() {
   const store = configureStore({
@@ -31,8 +32,9 @@ function App() {
               <Route path="/" element={<PublicRoute />}>
                 <Route index element={<Home />} />
               </Route>
-              <Route path="/login" element={<ProtectedRoute />}>
-                <Route index element={<Login />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
               </Route>
               <Route path="/admin" element={<PrivateRoute />}>
                 <Route index element={<Admin />} />

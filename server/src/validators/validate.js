@@ -21,10 +21,10 @@ export function validateData(data) {
   const { username, password, email, firstName, lastName } = data;
   const errors = [];
 
-  validateField(firstName, "First name", 3, errors);
-  validateField(lastName, "Last name", 3, errors);
-  validateField(username, "Username", 3, errors);
-  validateField(password, "Password", 6, errors);
+  validateField(firstName, "Nombre", 3, errors);
+  validateField(lastName, "Apellidos", 3, errors);
+  validateField(username, "Nombre de usuario", 3, errors);
+  validateField(password, "Contraseña", 6, errors);
   validateEmail(email, errors);
 
   return errors;
@@ -32,7 +32,7 @@ export function validateData(data) {
 
 function validateEmail(email, errors) {
   if (!email || !isValidEmail(email)) {
-    errors.push("Email is required and must be valid");
+    errors.push("Email es obligatorio y debe de ser valido");
   }
 }
 
@@ -40,8 +40,8 @@ function validateField(value, fieldName, minLength, errors) {
   if (!value || typeof value !== "string" || value.length < minLength) {
     errors.push(
       value
-        ? `${fieldName} must be at least ${minLength} characters long`
-        : `${fieldName} is required`
+        ? `${fieldName} debe de tener al menos ${minLength} characteres de largo`
+        : `${fieldName} es obligatorio`
     );
   }
 }

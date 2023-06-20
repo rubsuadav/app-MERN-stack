@@ -8,7 +8,7 @@ import swal from "sweetalert";
 import { useAuthContext } from "./routes/authContext";
 
 const navigation = [
-  { name: "Home", href: "/", current: true },
+  { name: "Inicio", href: "/", current: true },
   { name: "Team", href: "#", current: false },
   { name: "Projects", href: "#", current: false },
   { name: "Calendar", href: "#", current: false },
@@ -90,7 +90,7 @@ export default function Header() {
                     type="button"
                     className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                   >
-                    <span className="sr-only">View notifications</span>
+                    <span className="sr-only">Ver notificaciones</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
                   {/* Profile dropdown */}
@@ -125,7 +125,7 @@ export default function Header() {
                                 "block px-4 py-2 text-sm text-gray-700"
                               )}
                             >
-                              Your Profile
+                              Ver perfil
                             </a>
                           )}
                         </Menu.Item>
@@ -138,7 +138,7 @@ export default function Header() {
                                 "block px-4 py-2 text-sm text-gray-700"
                               )}
                             >
-                              Settings
+                              Configuración
                             </a>
                           )}
                         </Menu.Item>
@@ -151,7 +151,7 @@ export default function Header() {
                                 "block px-4 py-2 text-sm text-gray-700"
                               )}
                             >
-                              Sign out
+                              Cerrar sesión
                             </Link>
                           )}
                         </Menu.Item>
@@ -162,22 +162,13 @@ export default function Header() {
               ) : (
                 <div className="flex space-x-4">
                   <Link
-                    to="/login"
-                    className={classNames(
-                      "text-gray-300 hover:bg-gray-700 hover:text-white",
-                      "rounded-md px-3 py-2 text-sm font-medium"
-                    )}
-                  >
-                    Login
-                  </Link>
-                  <Link
                     to="/register"
                     className={classNames(
                       "text-gray-300 hover:bg-gray-700 hover:text-white",
                       "rounded-md px-3 py-2 text-sm font-medium"
                     )}
                   >
-                    Register
+                    Registrase
                   </Link>
                 </div>
               )}
