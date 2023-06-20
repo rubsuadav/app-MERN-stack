@@ -2,7 +2,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import user from "../models/user.js";
 import { secret } from "../config.js";
-import { validateData, validateUniqueUser } from "../validators/validate.js";
 
 /**
  * @returns {Object} The username of the logged in user
@@ -15,28 +14,6 @@ export const getUserNameByLoggedInUser = async (req, res) => {
       return res.status(404).json({ message: "User doesn't exist" });
 
     res.status(200).json({ username: userById.username });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-/**
- * @param {String} username
- * @returns {Object} The correspoding user profile
- */
-export const getUserProfile = async (req, res) => {
-  const { username } = req.params;
-  try {
-    const userByUsername = await user.find({ username });
-    const users = userByUsername.map((user) => user.username);
-    if (users.length === 0)
-      return res.status(404).json({ message: "User not found" });
-
-    res.status(200).json({
-      name: userByUsername[0].name,
-      username: userByUsername[0].username,
-      email: userByUsername[0].email,
-    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

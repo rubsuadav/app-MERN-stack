@@ -1,7 +1,6 @@
 import { Router } from "express";
 import {
   getUserNameByLoggedInUser,
-  getUserProfile,
   getPersonalProfile,
   updateUserProfile,
 } from "../controllers/user.controller.js";
@@ -15,7 +14,6 @@ import {
 const router = Router();
 
 router.get("/", auth, getUserNameByLoggedInUser);
-router.get("/:username", getUserProfile);
 router.get("/profile/:username", auth, getPersonalProfile);
 
 router.patch("/:username", auth, updateUserProfile);
