@@ -55,8 +55,15 @@ export default function PersonalProfile() {
         );
         const responseData = await response.json();
         const imageData = responseData.image.data;
-        profileData.profilePicture = imageData;
-        console.log(profileData);
+
+        // Convertir la matriz de bytes a cadena base64
+        const base64Image = btoa(
+          new Uint8Array(imageData).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ""
+          )
+        );
+        setProfileData({ ...profileData, profilePicture: base64Image });
         break;
       case 400:
         const data = await response.json();
