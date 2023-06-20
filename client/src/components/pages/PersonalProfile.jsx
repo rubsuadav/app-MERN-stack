@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import swal from "sweetalert";
-import { Modal, Button, Form } from "react-bootstrap";
-import ButtonR from "react-bootstrap/Button";
+import { Modal, Button } from "react-bootstrap";
 
 export default function PersonalProfile() {
   const token = localStorage.getItem("access_token");
   const { username } = useParams();
   const [profileData, setProfileData] = useState({});
   const [selectedFile, setSelectedFile] = useState(null);
-
+  const [errors, setErrors] = useState("");
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   async function getPersonalProfile() {
@@ -34,6 +34,16 @@ export default function PersonalProfile() {
     e.preventDefault();
     const formData = new FormData();
     formData.append("profilePicture", selectedFile);
+
+    if (!selectedFile) {
+      setErrors("Debes seleccionar una imagen para subir");
+      return;
+    }
+
+    if (!selectedFile.type.startsWith("image/")) {
+      setErrors("El archivo seleccionado no es una imagen válida");
+      return;
+    }
     const response = await fetch(
       `http://localhost:8000/api/users/${username}/uploadImage`,
       {
@@ -64,17 +74,22 @@ export default function PersonalProfile() {
           )
         );
         setProfileData({ ...profileData, profilePicture: base64Image });
+        setShowModal(false);
         break;
       case 400:
         const data = await response.json();
         const { message } = data;
-        swal(message, "Selecciona una imagen para subir", "error");
+        setErrors(message, "Selecciona una imagen para subir", "error");
         break;
       case 401:
-        swal("Error", "No estás autorizado para realizar esta acción", "error");
+        setErrors(
+          "Error",
+          "No estás autorizado para realizar esta acción",
+          "error"
+        );
         break;
       case 500:
-        swal(
+        setErrors(
           "Error",
           "Comunique con el administrador del sistema para reportar este error",
           "error"
@@ -84,14 +99,54 @@ export default function PersonalProfile() {
 
   useEffect(() => {
     getPersonalProfile();
-  }, [username, token]);
+  }, []);
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
 
   return (
     <div className="container mx-auto p-4 h-screen w-screen">
-      <form onSubmit={handleUploadImage}>
-        <input type="file" accept="image/*" onChange={handleFileSelect} />
-        <button type="submit">Upload</button>
-      </form>
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        onClick={toggleModal}
+      >
+        Open Modal
+      </button>
+
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50">
+          <div className="bg-white w-1/3 rounded-lg shadow-lg p-4">
+            <h2 className="text-lg font-bold mb-4">Upload Image</h2>
+
+            <form onSubmit={handleUploadImage}>
+              <input type="file" accept="image/*" onChange={handleFileSelect} />
+
+              <div className="flex justify-end mt-4">
+                <button
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mr-2 rounded"
+                  onClick={toggleModal}
+                  type="button"
+                >
+                  Cancel
+                </button>
+                <button
+                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                  type="submit"
+                >
+                  Upload
+                </button>
+              </div>
+            </form>
+
+            {errors && (
+              <div className="mt-4 p-2 bg-red-200 text-red-800 rounded">
+                <p className="font-bold text-black">{errors}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Mostrar la imagen actualizada */}
       {profileData.profilePicture && (
